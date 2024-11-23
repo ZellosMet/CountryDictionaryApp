@@ -1,10 +1,12 @@
 ﻿using CountryDictionaryApp.Entity;
+using CountryDictionaryApp.Migrations;
 using CountryDictionaryApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>();
 var app = builder.Build();
+
 //Получаем сервис DBContext 
 ApplicationDbContext db = app.Services.GetService<ApplicationDbContext>();
 //Выполняем автомиграцию перед запуском приложения
@@ -33,7 +35,7 @@ app.MapGet("/api/country/{id:int}", async (int id, ApplicationDbContext db) =>
 });
 
 //Запрос на получение страны по коду
-app.MapGet("/api/country/{code:alpha}", async (string code, ApplicationDbContext db) =>
+app.MapGet("/api/country/code/{code:alpha}", async (string code, ApplicationDbContext db) =>
 {
     Country country = await db.Countries.FirstOrDefaultAsync(d => d.ISO31661Alpha2Code == code || d.ISO31661Alpha3Code == code || d.ISO31661NumericCode == code );
     return country;
