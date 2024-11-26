@@ -3,26 +3,31 @@ name: CI
 on:
   push:
     branches:
-      – main
+      – ZellosMet-patch-1
   pull_request:
     branches:
-      – main
-
+      – ZellosMet-patch-1
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:            
-    - uses: actions/checkout@v4   
-    - uses: docker/setup-buildx-action@v3 
-    - uses: docker/setup-qemu-action@v1
-    - uses: docker/login-action@v3
-    with:
-      username: ${{ secrets.DOCKER_USERNAME }}
-      password: ${{ secrets.DOCKER_PASSWORD }}
-    
-    - uses: docker/build-push-action@v2
-    with:
-      context: .
-      push: true
-      tags: user/repo:latest    
-    run: docker-compose up -d
+
+    steps:
+      – name: Checkout repository
+        uses: actions/checkout@v2
+
+      – name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      – name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      – name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      – name: Build and push Docker images
+        run: |
+          docker-compose -f docker-compose.yml build
+          docker-compose -f docker-compose.yml push
